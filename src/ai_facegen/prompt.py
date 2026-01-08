@@ -1,6 +1,5 @@
 """Prompt composition for character portrait generation."""
 
-from typing import Tuple
 
 from .specs import CharacterSpec, VariantSpec, WorldSpec
 
@@ -26,7 +25,7 @@ Style: {world_style}"""
         world: WorldSpec,
         character: CharacterSpec,
         variant: VariantSpec,
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """Compose a prompt and negative prompt from specs.
 
         Args:

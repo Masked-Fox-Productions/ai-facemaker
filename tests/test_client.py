@@ -1,17 +1,15 @@
 """Tests for PortraitClient."""
 
 import io
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from PIL import Image
 
 from ai_facegen import (
-    CharacterSpec,
     PortraitClient,
     PortraitResult,
     VariantSpec,
-    WorldSpec,
 )
 from ai_facegen.cache import MemoryCache
 from ai_facegen.exceptions import ModelNotFoundError

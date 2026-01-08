@@ -3,7 +3,7 @@
 import base64
 import json
 import random
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 from ..exceptions import ContentModerationError, GenerationError
 from .base import ModelAdapter
@@ -28,7 +28,7 @@ class SD35LargeAdapter(ModelAdapter):
         return self.MAX_PROMPT_LENGTH
 
     @property
-    def supported_sizes(self) -> List[int]:
+    def supported_sizes(self) -> list[int]:
         return self.SUPPORTED_SIZES
 
     @property
@@ -41,10 +41,10 @@ class SD35LargeAdapter(ModelAdapter):
         model_id: str,
         prompt: str,
         negative_prompt: str,
-        seed: Optional[int],
+        seed: int | None,
         width: int,
         height: int,
-    ) -> Tuple[bytes, Optional[int]]:
+    ) -> tuple[bytes, int | None]:
         """Generate an image using Stability SD3.5 Large.
 
         Args:

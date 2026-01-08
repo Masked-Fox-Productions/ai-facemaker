@@ -1,7 +1,6 @@
 """Data classes for world, character, and variant specifications."""
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass(frozen=True)

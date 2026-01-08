@@ -69,7 +69,7 @@ class TestPromptComposer:
 
     def test_summarize_context_long(self, composer):
         """Test that long context is truncated."""
-        context = "First sentence. Second sentence. Third sentence. Fourth sentence. Fifth sentence."
+        context = "First sentence. Second sentence. Third sentence. Fourth sentence."
         result = composer._summarize_context(context, max_sentences=2)
         assert "First sentence" in result
         assert "Second sentence" in result

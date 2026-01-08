@@ -7,7 +7,6 @@ import shutil
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
 
 from .result import PortraitResult
 
@@ -22,7 +21,7 @@ class ResultCache(ABC):
         negative: str,
         model: str,
         size: int,
-        seed: Optional[int],
+        seed: int | None,
     ) -> str:
         """Generate a cache key from generation parameters.
 
@@ -39,7 +38,7 @@ class ResultCache(ABC):
         pass
 
     @abstractmethod
-    def get(self, key: str) -> Optional[PortraitResult]:
+    def get(self, key: str) -> PortraitResult | None:
         """Retrieve a cached result.
 
         Args:
@@ -78,11 +77,11 @@ class NoOpCache(ResultCache):
         negative: str,
         model: str,
         size: int,
-        seed: Optional[int],
+        seed: int | None,
     ) -> str:
         return ""
 
-    def get(self, key: str) -> Optional[PortraitResult]:
+    def get(self, key: str) -> PortraitResult | None:
         return None
 
     def put(self, key: str, result: PortraitResult) -> None:
@@ -102,7 +101,7 @@ class FileCache(ResultCache):
                 abcd1234...png   (image)
     """
 
-    def __init__(self, cache_dir: Optional[str] = None):
+    def __init__(self, cache_dir: str | None = None):
         """Initialize file cache.
 
         Args:
@@ -120,7 +119,7 @@ class FileCache(ResultCache):
         negative: str,
         model: str,
         size: int,
-        seed: Optional[int],
+        seed: int | None,
     ) -> str:
         """Generate a deterministic hash key from parameters."""
         key_data = {
@@ -143,7 +142,7 @@ class FileCache(ResultCache):
             subdir / f"{key}.png",
         )
 
-    def get(self, key: str) -> Optional[PortraitResult]:
+    def get(self, key: str) -> PortraitResult | None:
         """Retrieve a cached result."""
         if not key:
             return None
@@ -154,7 +153,7 @@ class FileCache(ResultCache):
             return None
 
         try:
-            with open(meta_path, "r") as f:
+            with open(meta_path) as f:
                 meta = json.load(f)
 
             with open(img_path, "rb") as f:
@@ -165,7 +164,7 @@ class FileCache(ResultCache):
                 png_bytes=png_bytes,
                 seed=meta.get("seed"),
             )
-        except (json.JSONDecodeError, IOError, KeyError):
+        except (OSError, json.JSONDecodeError, KeyError):
             # Cache corrupted, return None
             return None
 
@@ -216,13 +215,13 @@ class MemoryCache(ResultCache):
         negative: str,
         model: str,
         size: int,
-        seed: Optional[int],
+        seed: int | None,
     ) -> str:
         """Generate a hash key from parameters."""
         key_data = f"{prompt}|{negative}|{model}|{size}|{seed}"
         return hashlib.sha256(key_data.encode()).hexdigest()
 
-    def get(self, key: str) -> Optional[PortraitResult]:
+    def get(self, key: str) -> PortraitResult | None:
         """Retrieve from cache with LRU update."""
         if key in self._cache:
             # Move to end (most recently used)

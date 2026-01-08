@@ -2,7 +2,6 @@
 
 import io
 from dataclasses import dataclass, field
-from typing import Optional
 
 from PIL import Image
 
@@ -22,8 +21,8 @@ class PortraitResult:
 
     name: str
     png_bytes: bytes
-    seed: Optional[int] = None
-    _pil_image: Optional[Image.Image] = field(default=None, repr=False, compare=False)
+    seed: int | None = None
+    _pil_image: Image.Image | None = field(default=None, repr=False, compare=False)
 
     @property
     def image(self) -> Image.Image:

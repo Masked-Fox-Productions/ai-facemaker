@@ -1,6 +1,6 @@
 """Main client for generating character portraits via AWS Bedrock."""
 
-from typing import Dict, List, Optional, Sequence, Union
+from collections.abc import Sequence
 
 import boto3
 from botocore.config import Config
@@ -40,10 +40,10 @@ class PortraitClient:
 
     def __init__(
         self,
-        region_name: Optional[str] = None,
+        region_name: str | None = None,
         model: str = DEFAULT_MODEL,
-        cache: Optional[ResultCache] = None,
-        boto_config: Optional[Config] = None,
+        cache: ResultCache | None = None,
+        boto_config: Config | None = None,
     ):
         """Initialize the portrait client.
 
@@ -95,9 +95,9 @@ class PortraitClient:
         world: WorldSpec,
         character: CharacterSpec,
         variants: Sequence[VariantSpec],
-        seed: Optional[int] = None,
+        seed: int | None = None,
         count: int = 1,
-    ) -> Union[Dict[str, PortraitResult], Dict[str, List[PortraitResult]]]:
+    ) -> dict[str, PortraitResult] | dict[str, list[PortraitResult]]:
         """Generate portrait variants for a character.
 
         Args:
@@ -125,10 +125,10 @@ class PortraitClient:
         world: WorldSpec,
         character: CharacterSpec,
         variants: Sequence[VariantSpec],
-        seed: Optional[int],
-    ) -> Dict[str, PortraitResult]:
+        seed: int | None,
+    ) -> dict[str, PortraitResult]:
         """Generate a single image per variant."""
-        results: Dict[str, PortraitResult] = {}
+        results: dict[str, PortraitResult] = {}
 
         for variant in variants:
             # Compose the prompt
@@ -188,14 +188,14 @@ class PortraitClient:
         world: WorldSpec,
         character: CharacterSpec,
         variants: Sequence[VariantSpec],
-        seed: Optional[int],
+        seed: int | None,
         count: int,
-    ) -> Dict[str, List[PortraitResult]]:
+    ) -> dict[str, list[PortraitResult]]:
         """Generate multiple images per variant."""
-        results: Dict[str, List[PortraitResult]] = {}
+        results: dict[str, list[PortraitResult]] = {}
 
         for variant in variants:
-            variant_results: List[PortraitResult] = []
+            variant_results: list[PortraitResult] = []
 
             # Compose the prompt once
             prompt, negative = self._composer.compose(world, character, variant)

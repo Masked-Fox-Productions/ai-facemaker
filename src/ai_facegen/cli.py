@@ -3,7 +3,6 @@
 import json
 import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -62,13 +61,13 @@ def cli():
 def generate(
     config: str,
     output: str,
-    characters: Optional[str],
-    region: Optional[str],
+    characters: str | None,
+    region: str | None,
     model: str,
-    seed: Optional[int],
+    seed: int | None,
     count: int,
     cache: bool,
-    cache_dir: Optional[str],
+    cache_dir: str | None,
 ):
     """Generate portraits from a JSON configuration file.
 
@@ -76,7 +75,7 @@ def generate(
     Characters can be in the config file or specified separately via --characters.
     """
     # Load config
-    with open(config, "r") as f:
+    with open(config) as f:
         cfg = json.load(f)
 
     # Parse world spec
@@ -120,7 +119,7 @@ def generate(
         char_path = Path(characters)
         if char_path.is_file():
             # Single character file
-            with open(char_path, "r") as f:
+            with open(char_path) as f:
                 char_cfg = json.load(f)
             characters_list.append(
                 CharacterSpec(
@@ -132,7 +131,7 @@ def generate(
         elif char_path.is_dir():
             # Directory of character files
             for json_file in sorted(char_path.glob("*.json")):
-                with open(json_file, "r") as f:
+                with open(json_file) as f:
                     char_cfg = json.load(f)
                 characters_list.append(
                     CharacterSpec(
@@ -204,7 +203,7 @@ def generate(
 
 @cli.command()
 @click.option("--region", "-r", type=str, default=None, help="AWS region to test")
-def test_credentials(region: Optional[str]):
+def test_credentials(region: str | None):
     """Test AWS credentials and Bedrock access."""
     import boto3
 
@@ -232,7 +231,7 @@ def test_credentials(region: Optional[str]):
 
 @cli.command()
 @click.option("--cache-dir", type=click.Path(), default=None, help="Cache directory to clear")
-def clear_cache(cache_dir: Optional[str]):
+def clear_cache(cache_dir: str | None):
     """Clear the result cache."""
     cache = FileCache(cache_dir)
     cache.clear()
@@ -252,7 +251,7 @@ def init_config():
             {
                 "name": "Elena Stormblade",
                 "role": "Knight Captain",
-                "description": "Stern woman in plate armor, silver hair, battle scars, determined expression.",
+                "description": "Stern woman in plate armor, silver hair, battle scars.",
             },
             {
                 "name": "Finn Quickfingers",
@@ -264,7 +263,7 @@ def init_config():
             {
                 "name": "icon",
                 "size": 64,
-                "prompt_frame": "Small square icon, face closeup, bold silhouette, readable at tiny size.",
+                "prompt_frame": "Small square icon, face closeup, bold silhouette.",
             },
             {
                 "name": "bust",

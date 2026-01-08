@@ -1,13 +1,11 @@
 """Model adapters for AWS Bedrock image generation models."""
 
-from typing import Dict, Type
-
 from .base import ModelAdapter
-from .titan import TitanImageAdapter
-from .sdxl import SDXLAdapter
 from .sd35 import SD35LargeAdapter
+from .sdxl import SDXLAdapter
+from .titan import TitanImageAdapter
 
-_ADAPTERS: Dict[str, Type[ModelAdapter]] = {
+_ADAPTERS: dict[str, type[ModelAdapter]] = {
     "titan": TitanImageAdapter,
     "sdxl": SDXLAdapter,
     "sd35": SD35LargeAdapter,

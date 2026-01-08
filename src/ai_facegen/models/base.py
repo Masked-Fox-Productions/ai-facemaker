@@ -1,7 +1,7 @@
 """Abstract base class for Bedrock model adapters."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, Any
+from typing import Any
 
 
 class ModelAdapter(ABC):
@@ -19,10 +19,10 @@ class ModelAdapter(ABC):
         model_id: str,
         prompt: str,
         negative_prompt: str,
-        seed: Optional[int],
+        seed: int | None,
         width: int,
         height: int,
-    ) -> Tuple[bytes, Optional[int]]:
+    ) -> tuple[bytes, int | None]:
         """Generate an image via the model.
 
         Args:
@@ -53,7 +53,7 @@ class ModelAdapter(ABC):
 
     @property
     @abstractmethod
-    def supported_sizes(self) -> List[int]:
+    def supported_sizes(self) -> list[int]:
         """List of supported image sizes."""
         pass
 
