@@ -1,23 +1,24 @@
 /**
  * ai-facemaker Demo Application
  *
- * This handles the browser-based portrait generation using AWS Bedrock.
+ * Browser-based portrait generation using AWS Bedrock with user-provided credentials.
+ * Credentials are stored in browser memory only and never sent to any server.
  */
 
 // State
-let cognitoUser = null;
 let awsCredentials = null;
+let awsRegion = null;
 
 // DOM Elements
-const authSection = document.getElementById('auth-section');
+const credentialsSection = document.getElementById('credentials-section');
 const generatorSection = document.getElementById('generator-section');
 const resultsSection = document.getElementById('results-section');
 const setupSection = document.getElementById('setup-section');
 
-const signInForm = document.getElementById('sign-in-form');
-const signedInView = document.getElementById('signed-in-view');
-const authStatus = document.getElementById('auth-status');
-const userEmailSpan = document.getElementById('user-email');
+const credentialsForm = document.getElementById('credentials-form');
+const connectedView = document.getElementById('connected-view');
+const credentialsStatus = document.getElementById('credentials-status');
+const connectedRegion = document.getElementById('connected-region');
 
 const generateBtn = document.getElementById('generate-btn');
 const downloadBtn = document.getElementById('download-btn');
@@ -28,45 +29,13 @@ const resultImage = document.getElementById('result-image');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    if (!isConfigured()) {
-        showStatus('Please configure AWS Cognito in aws-config.js', 'error');
-        setupSection.style.display = 'block';
-        return;
-    }
-
-    setupSection.style.display = 'none';
-    initCognito();
     attachEventListeners();
 });
 
-// Initialize Cognito
-function initCognito() {
-    const poolData = {
-        UserPoolId: AWS_CONFIG.userPoolId,
-        ClientId: AWS_CONFIG.userPoolClientId,
-    };
-
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-    cognitoUser = userPool.getCurrentUser();
-
-    if (cognitoUser) {
-        cognitoUser.getSession((err, session) => {
-            if (err || !session.isValid()) {
-                showSignInForm();
-            } else {
-                handleSignedIn(cognitoUser, session);
-            }
-        });
-    } else {
-        showSignInForm();
-    }
-}
-
 // Event Listeners
 function attachEventListeners() {
-    document.getElementById('sign-in-btn').addEventListener('click', handleSignIn);
-    document.getElementById('sign-up-btn').addEventListener('click', handleSignUp);
-    document.getElementById('sign-out-btn').addEventListener('click', handleSignOut);
+    document.getElementById('connect-btn').addEventListener('click', handleConnect);
+    document.getElementById('disconnect-btn').addEventListener('click', handleDisconnect);
     generateBtn.addEventListener('click', handleGenerate);
     downloadBtn.addEventListener('click', handleDownload);
     regenerateBtn.addEventListener('click', () => {
@@ -74,148 +43,103 @@ function attachEventListeners() {
         generatorSection.style.display = 'block';
     });
 
-    // Enter key on password field
-    document.getElementById('password').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleSignIn();
+    // Toggle visibility buttons
+    document.querySelectorAll('.toggle-visibility').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🔒';
+                btn.title = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+                btn.title = 'Show';
+            }
+        });
+    });
+
+    // Enter key on secret key field
+    document.getElementById('secret-access-key').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleConnect();
     });
 }
 
-// Auth Functions
-function showSignInForm() {
-    signInForm.style.display = 'block';
-    signedInView.style.display = 'none';
-    generatorSection.style.display = 'none';
-}
+// Connection Functions
+async function handleConnect() {
+    const region = document.getElementById('aws-region').value;
+    const accessKeyId = document.getElementById('access-key-id').value.trim();
+    const secretAccessKey = document.getElementById('secret-access-key').value.trim();
 
-function handleSignIn() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (!email || !password) {
-        showStatus('Please enter email and password', 'error');
+    if (!accessKeyId || !secretAccessKey) {
+        showStatus('Please enter both Access Key ID and Secret Access Key', 'error');
         return;
     }
 
-    const authData = {
-        Username: email,
-        Password: password,
-    };
-
-    const authDetails = new AmazonCognitoIdentity.AuthenticationDetails(authData);
-
-    const poolData = {
-        UserPoolId: AWS_CONFIG.userPoolId,
-        ClientId: AWS_CONFIG.userPoolClientId,
-    };
-
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-    const userData = {
-        Username: email,
-        Pool: userPool,
-    };
-
-    cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-
-    showStatus('Signing in...', '');
-
-    cognitoUser.authenticateUser(authDetails, {
-        onSuccess: (session) => {
-            handleSignedIn(cognitoUser, session);
-        },
-        onFailure: (err) => {
-            showStatus(err.message || 'Sign in failed', 'error');
-        },
-        newPasswordRequired: () => {
-            showStatus('New password required. Please use AWS Console to set password.', 'error');
-        },
-    });
-}
-
-function handleSignUp() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    if (!email || !password) {
-        showStatus('Please enter email and password', 'error');
+    if (!accessKeyId.startsWith('AKIA') && !accessKeyId.startsWith('ASIA')) {
+        showStatus('Access Key ID should start with AKIA or ASIA', 'error');
         return;
     }
 
-    const poolData = {
-        UserPoolId: AWS_CONFIG.userPoolId,
-        ClientId: AWS_CONFIG.userPoolClientId,
-    };
+    showStatus('Validating credentials...', '');
 
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-    const attributeList = [
-        new AmazonCognitoIdentity.CognitoUserAttribute({
-            Name: 'email',
-            Value: email,
-        }),
-    ];
-
-    showStatus('Creating account...', '');
-
-    userPool.signUp(email, password, attributeList, null, (err, result) => {
-        if (err) {
-            showStatus(err.message || 'Sign up failed', 'error');
-            return;
-        }
-        showStatus('Account created! Check your email for verification code.', 'success');
+    // Configure AWS SDK
+    AWS.config.update({
+        region: region,
+        credentials: new AWS.Credentials(accessKeyId, secretAccessKey)
     });
-}
 
-function handleSignedIn(user, session) {
-    const email = user.getUsername();
-    userEmailSpan.textContent = email;
+    // Test the credentials by listing foundation models
+    const bedrock = new AWS.Bedrock({ region: region });
 
-    signInForm.style.display = 'none';
-    signedInView.style.display = 'block';
-    generatorSection.style.display = 'block';
-    showStatus('Signed in successfully', 'success');
+    try {
+        await bedrock.listFoundationModels({ byOutputModality: 'IMAGE' }).promise();
 
-    // Get AWS credentials
-    getAWSCredentials(session);
-}
+        // Credentials work
+        awsCredentials = { accessKeyId, secretAccessKey };
+        awsRegion = region;
 
-function handleSignOut() {
-    if (cognitoUser) {
-        cognitoUser.signOut();
+        showConnectedState();
+        showStatus('Connected successfully', 'success');
+    } catch (err) {
+        showStatus('Connection failed: ' + (err.message || 'Invalid credentials'), 'error');
+        awsCredentials = null;
+        awsRegion = null;
     }
-    cognitoUser = null;
+}
+
+function handleDisconnect() {
     awsCredentials = null;
-    showSignInForm();
-    showStatus('Signed out', '');
+    awsRegion = null;
+    AWS.config.credentials = null;
+
+    // Clear form fields
+    document.getElementById('access-key-id').value = '';
+    document.getElementById('secret-access-key').value = '';
+
+    showDisconnectedState();
+    showStatus('Disconnected', '');
 }
 
-function getAWSCredentials(session) {
-    const idToken = session.getIdToken().getJwtToken();
+function showConnectedState() {
+    credentialsForm.style.display = 'none';
+    connectedView.style.display = 'block';
+    connectedRegion.textContent = `(${awsRegion})`;
+    generatorSection.style.display = 'block';
+}
 
-    AWS.config.region = AWS_CONFIG.region;
-
-    const loginKey = `cognito-idp.${AWS_CONFIG.region}.amazonaws.com/${AWS_CONFIG.userPoolId}`;
-
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: AWS_CONFIG.identityPoolId,
-        Logins: {
-            [loginKey]: idToken,
-        },
-    });
-
-    AWS.config.credentials.refresh((err) => {
-        if (err) {
-            showStatus('Failed to get AWS credentials: ' + err.message, 'error');
-        } else {
-            awsCredentials = AWS.config.credentials;
-        }
-    });
+function showDisconnectedState() {
+    credentialsForm.style.display = 'block';
+    connectedView.style.display = 'none';
+    generatorSection.style.display = 'none';
+    resultsSection.style.display = 'none';
 }
 
 // Generation Functions
 async function handleGenerate() {
     if (!awsCredentials) {
-        showStatus('Not authenticated. Please sign in.', 'error');
+        showStatus('Not connected. Please enter your AWS credentials.', 'error');
         return;
     }
 
@@ -267,7 +191,7 @@ Style: ${style}`;
 }
 
 async function generateImage(modelId, prompt, negative, size) {
-    const bedrock = new AWS.BedrockRuntime({ region: AWS_CONFIG.region });
+    const bedrock = new AWS.BedrockRuntime({ region: awsRegion });
 
     let requestBody;
 
@@ -338,11 +262,9 @@ async function generateImage(modelId, prompt, negative, size) {
         throw new Error('No image in response');
     }
 
-    // Convert base64 to bytes and resize if needed
+    // Convert base64 to bytes
     const imageBytes = Uint8Array.from(atob(base64Image), c => c.charCodeAt(0));
 
-    // For browser, we'll display at native size and let CSS handle scaling
-    // In production, you'd want server-side processing for proper downscaling
     return imageBytes;
 }
 
@@ -373,8 +295,8 @@ function handleDownload() {
 
 // Utility Functions
 function showStatus(message, type) {
-    authStatus.textContent = message;
-    authStatus.className = 'status ' + type;
+    credentialsStatus.textContent = message;
+    credentialsStatus.className = 'status ' + type;
 }
 
 function showError(message) {

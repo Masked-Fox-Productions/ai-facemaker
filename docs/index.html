@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="styles.css">
     <!-- AWS SDK -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
-    <!-- Amazon Cognito Identity SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -17,20 +15,42 @@
             <p class="subtitle">Generate consistent character portraits with Amazon Bedrock</p>
         </header>
 
-        <!-- Auth Section -->
-        <section id="auth-section" class="card">
-            <h2>Sign In</h2>
-            <p>Sign in with your AWS Cognito account to use the demo.</p>
-            <div id="auth-status" class="status"></div>
-            <div id="sign-in-form">
-                <input type="email" id="email" placeholder="Email" class="input">
-                <input type="password" id="password" placeholder="Password" class="input">
-                <button id="sign-in-btn" class="btn btn-primary">Sign In</button>
-                <button id="sign-up-btn" class="btn btn-secondary">Create Account</button>
+        <!-- Credentials Section -->
+        <section id="credentials-section" class="card">
+            <h2>AWS Credentials</h2>
+            <p>Enter your AWS credentials to generate images. Credentials are stored in your browser only and never sent to any server.</p>
+            <div id="credentials-status" class="status"></div>
+            <div id="credentials-form">
+                <div class="form-group">
+                    <label for="aws-region">Region</label>
+                    <select id="aws-region" class="input">
+                        <option value="us-east-1">US East (N. Virginia)</option>
+                        <option value="us-west-2">US West (Oregon)</option>
+                        <option value="eu-west-1">Europe (Ireland)</option>
+                        <option value="eu-central-1">Europe (Frankfurt)</option>
+                        <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                        <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="access-key-id">Access Key ID</label>
+                    <div class="password-field">
+                        <input type="password" id="access-key-id" placeholder="AKIA..." class="input">
+                        <button type="button" class="toggle-visibility" data-target="access-key-id" title="Show/hide">👁</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="secret-access-key">Secret Access Key</label>
+                    <div class="password-field">
+                        <input type="password" id="secret-access-key" placeholder="Your secret key" class="input">
+                        <button type="button" class="toggle-visibility" data-target="secret-access-key" title="Show/hide">👁</button>
+                    </div>
+                </div>
+                <button id="connect-btn" class="btn btn-primary">Connect to AWS</button>
             </div>
-            <div id="signed-in-view" style="display: none;">
-                <p>Signed in as: <span id="user-email"></span></p>
-                <button id="sign-out-btn" class="btn btn-secondary">Sign Out</button>
+            <div id="connected-view" style="display: none;">
+                <p class="connected-status">Connected to AWS <span id="connected-region"></span></p>
+                <button id="disconnect-btn" class="btn btn-secondary">Disconnect</button>
             </div>
         </section>
 
@@ -122,15 +142,31 @@
 
         <!-- Setup Instructions -->
         <section id="setup-section" class="card">
-            <h2>Setup Instructions</h2>
-            <p>To use this demo, you need to configure AWS Cognito:</p>
+            <h2>Requirements</h2>
+            <p>To use this demo, you need:</p>
             <ol>
-                <li>Create a Cognito User Pool in your AWS account</li>
-                <li>Create a Cognito Identity Pool with authenticated access</li>
-                <li>Attach an IAM role with <code>bedrock:InvokeModel</code> permission</li>
-                <li>Update <code>aws-config.js</code> with your pool IDs</li>
+                <li>An AWS account with <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html" target="_blank">Bedrock model access</a> enabled</li>
+                <li>IAM credentials with <code>bedrock:InvokeModel</code> permission</li>
             </ol>
-            <p>See the <a href="https://github.com/Masked-Fox-Productions/ai-facemaker#demo-setup">README</a> for detailed instructions.</p>
+            <details>
+                <summary>How to create IAM credentials</summary>
+                <ol>
+                    <li>Go to <strong>AWS Console → IAM → Users</strong></li>
+                    <li>Create a new user or select existing</li>
+                    <li>Attach a policy with Bedrock access:
+                        <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "bedrock:InvokeModel",
+    "Resource": "*"
+  }]
+}</code></pre>
+                    </li>
+                    <li>Create access keys under <strong>Security credentials</strong></li>
+                </ol>
+            </details>
+            <p>See the <a href="https://github.com/Masked-Fox-Productions/ai-facemaker">GitHub repo</a> for more information.</p>
         </section>
 
         <footer>
@@ -138,7 +174,6 @@
         </footer>
     </div>
 
-    <script src="aws-config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

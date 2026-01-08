@@ -120,6 +120,38 @@ select.input {
     cursor: pointer;
 }
 
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field .input {
+    padding-right: 3rem;
+}
+
+.toggle-visibility {
+    position: absolute;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.toggle-visibility:hover {
+    color: var(--text);
+}
+
+.connected-status {
+    color: var(--success);
+    font-weight: 500;
+}
+
 hr {
     border: none;
     border-top: 1px solid var(--border);
@@ -282,6 +314,42 @@ ol, ul {
 
 li {
     margin-bottom: 0.5rem;
+}
+
+details {
+    margin: 1rem 0;
+    background: var(--background);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+summary:hover {
+    color: var(--primary-hover);
+}
+
+details[open] summary {
+    margin-bottom: 1rem;
+}
+
+pre {
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1.4;
 }
 
 @media (max-width: 600px) {
