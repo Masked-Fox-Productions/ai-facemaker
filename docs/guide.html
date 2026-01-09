@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Guide - ai-facemaker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a href="index.html" class="nav-brand">ai-facemaker</a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="guide.html" class="active">Guide</a>
+                <a href="setup.html">AWS Setup</a>
+                <a href="index.html" class="btn btn-primary btn-small">Try Demo</a>
+            </div>
+        </nav>
+
+        <main class="docs-content">
+            <h1>Generator Guide</h1>
+            <p class="lead">Learn how to craft prompts that produce consistent, high-quality character portraits.</p>
+
+            <section class="doc-section">
+                <h2>The Key Concept: Consistency Through Context</h2>
+                <p>ai-facemaker generates consistent portraits by combining three layers of context:</p>
+                <ol>
+                    <li><strong>World Context</strong> - The shared universe all characters inhabit</li>
+                    <li><strong>Visual Style</strong> - The artistic approach applied to everyone</li>
+                    <li><strong>Character Details</strong> - Individual traits for each person</li>
+                </ol>
+                <p>When you keep the world and style consistent, characters from the same project will look like they belong together.</p>
+            </section>
+
+            <section class="doc-section">
+                <h2>World Context</h2>
+                <p>Describe the setting, time period, and tone of your project. This grounds all characters in the same reality.</p>
+
+                <h3>Good examples:</h3>
+                <div class="example-box">
+                    <p><strong>Sci-fi game:</strong> "Moon Hard Lemonade is a far-future sci-fi cartoon adventure. Humans joined an alien alliance because they love Moon Hard Lemonade. The light side of the Moon is a huge industrial manufacturing hub."</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Fantasy novel:</strong> "The Ember Kingdoms is a medieval fantasy world where magic flows from volcanic vents. Society is divided between the fire-blessed nobles and the ash-covered workers who tend the forges."</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Modern thriller:</strong> "A gritty crime drama set in 1970s Chicago. Corrupt cops, desperate criminals, and ordinary people caught in between. Rain-soaked streets and neon-lit diners."</p>
+                </div>
+
+                <h3>Tips:</h3>
+                <ul>
+                    <li>Include the genre and tone (cartoon, realistic, gritty, whimsical)</li>
+                    <li>Mention the time period or technology level</li>
+                    <li>Keep it to 2-3 sentences - the model uses this as background context</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Visual Style</h2>
+                <p>Define the artistic approach for your portraits. This ensures visual consistency across all characters.</p>
+
+                <h3>Good examples:</h3>
+                <div class="example-box">
+                    <p><strong>Cartoon style:</strong> "Clean, readable sci-fi cartoon portraits. Crisp linework, bold shapes, simple shading. Friendly character design. Consistent cast style. Uncluttered backgrounds."</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Painterly style:</strong> "Oil painting style portraits with rich, warm colors. Dramatic lighting from a single source. Visible brushstrokes. Renaissance-inspired composition."</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Pixel art:</strong> "16-bit pixel art character portraits. Limited color palette of 32 colors. Clean pixel placement, no anti-aliasing. Reminiscent of SNES RPG character screens."</p>
+                </div>
+
+                <h3>Tips:</h3>
+                <ul>
+                    <li>Specify the medium (digital art, oil painting, watercolor, pixel art)</li>
+                    <li>Describe lighting preferences (soft, dramatic, flat)</li>
+                    <li>Mention color palette tendencies (warm, cool, muted, vibrant)</li>
+                    <li>Reference recognizable styles if helpful (Studio Ghibli, noir, Art Deco)</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Negative Prompt</h2>
+                <p>List things you want to avoid in the generated images.</p>
+
+                <h3>Common negatives:</h3>
+                <div class="example-box">
+                    <code>text, watermark, logo, signature, blurry, low-res, cropped, out of frame</code>
+                </div>
+
+                <h3>Style-specific negatives:</h3>
+                <div class="example-box">
+                    <p><strong>For cartoon styles:</strong> <code>photorealistic, photograph, 3D render, uncanny valley</code></p>
+                </div>
+                <div class="example-box">
+                    <p><strong>For realistic styles:</strong> <code>cartoon, anime, illustration, painting</code></p>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>Character Details</h2>
+
+                <h3>Name</h3>
+                <p>The character's name. This is included in the prompt and helps with consistency if you generate multiple portraits of the same character.</p>
+
+                <h3>Role</h3>
+                <p>Their job, title, or function in the story. This influences clothing, posture, and expression.</p>
+                <div class="example-box">
+                    <p>Examples: "Starship Captain", "Village Blacksmith", "Street Urchin", "Corporate Executive", "Rebel Leader"</p>
+                </div>
+
+                <h3>Description</h3>
+                <p>Physical appearance, clothing, and expression. Be specific about distinguishing features.</p>
+                <div class="example-box">
+                    <p><strong>Good:</strong> "Optimistic smuggler-mechanic, mischievous grin, short messy hair, grease-stained gloves, welding goggles pushed up on forehead."</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Too vague:</strong> "A woman who works on ships."</p>
+                </div>
+
+                <h3>Tips for descriptions:</h3>
+                <ul>
+                    <li>Lead with personality/expression - it sets the tone</li>
+                    <li>Include 2-3 distinctive visual elements</li>
+                    <li>Mention clothing or accessories relevant to their role</li>
+                    <li>Keep it concise - long descriptions can confuse the model</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Model Selection</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Best For</th>
+                            <th>Cost</th>
+                            <th>Speed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Amazon Titan</strong></td>
+                            <td>Quick iterations, simple styles, budget-conscious</td>
+                            <td>~$0.01</td>
+                            <td>Fast</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stability SDXL</strong></td>
+                            <td>Balanced quality/cost, most art styles</td>
+                            <td>~$0.04</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stability SD3.5</strong></td>
+                            <td>Highest quality, complex details, final renders</td>
+                            <td>~$0.08</td>
+                            <td>Slower</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Recommendation:</strong> Start with Titan for experimentation, then use SDXL or SD3.5 for final portraits.</p>
+            </section>
+
+            <section class="doc-section">
+                <h2>Output Size</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Size</th>
+                            <th>Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>64x64</strong></td>
+                            <td>Game icons, thumbnails, UI elements</td>
+                        </tr>
+                        <tr>
+                            <td><strong>256x256</strong></td>
+                            <td>Character cards, dialogue boxes, small portraits</td>
+                        </tr>
+                        <tr>
+                            <td><strong>512x512</strong></td>
+                            <td>Web avatars, medium displays</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1024x1024</strong></td>
+                            <td>Full-size artwork, print, hero images</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>All images are generated at 1024x1024 and downscaled with high-quality LANCZOS filtering for crisp results at smaller sizes.</p>
+            </section>
+
+            <section class="doc-section">
+                <h2>Framing</h2>
+                <p>Controls the composition and cropping of the portrait.</p>
+                <div class="example-box">
+                    <p><strong>Head and shoulders:</strong> "Head and shoulders portrait, light background." - Classic bust shot</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Close-up:</strong> "Extreme close-up face portrait, dramatic lighting." - Emphasizes expression</p>
+                </div>
+                <div class="example-box">
+                    <p><strong>Three-quarter:</strong> "Three-quarter body portrait, environmental background." - Shows more context</p>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>Workflow Tips</h2>
+                <ol>
+                    <li><strong>Lock in your world and style first</strong> - Generate a few test portraits until you're happy with the overall look</li>
+                    <li><strong>Save your settings</strong> - Copy your world context and style to a text file for reuse</li>
+                    <li><strong>Iterate on characters</strong> - Generate 3-4 versions and pick the best one</li>
+                    <li><strong>Use consistent framing</strong> - Keep the same framing prompt for all characters in a set</li>
+                    <li><strong>Start cheap, finish expensive</strong> - Use Titan for drafts, SD3.5 for finals</li>
+                </ol>
+            </section>
+
+            <div class="doc-nav">
+                <a href="setup.html" class="btn btn-secondary">Back: AWS Setup</a>
+                <a href="index.html" class="btn btn-primary">Try the Demo</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://github.com/Masked-Fox-Productions/ai-facemaker">ai-facemaker</a></p>
+        </footer>
+    </div>
+</body>
+</html>

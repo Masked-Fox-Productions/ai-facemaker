@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Setup Guide - ai-facemaker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a href="index.html" class="nav-brand">ai-facemaker</a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="guide.html">Guide</a>
+                <a href="setup.html" class="active">AWS Setup</a>
+                <a href="index.html" class="btn btn-primary btn-small">Try Demo</a>
+            </div>
+        </nav>
+
+        <main class="docs-content">
+            <h1>AWS Setup Guide</h1>
+            <p class="lead">Get your AWS credentials configured for Bedrock image generation in about 10 minutes.</p>
+
+            <section class="doc-section">
+                <h2>Prerequisites</h2>
+                <ul>
+                    <li>An AWS account (<a href="https://aws.amazon.com/free/" target="_blank">create one free</a>)</li>
+                    <li>A payment method on file (image generation costs ~$0.01-0.08 per image)</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Step 1: Enable Bedrock Model Access</h2>
+                <p>AWS requires you to explicitly enable each AI model before use.</p>
+                <ol>
+                    <li>Go to the <a href="https://console.aws.amazon.com/bedrock/home" target="_blank">Amazon Bedrock Console</a></li>
+                    <li>Select a supported region from the top-right dropdown:
+                        <ul>
+                            <li>US East (N. Virginia) - <code>us-east-1</code></li>
+                            <li>US West (Oregon) - <code>us-west-2</code></li>
+                            <li>Europe (Frankfurt) - <code>eu-central-1</code></li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>Model access</strong> in the left sidebar</li>
+                    <li>Click <strong>Modify model access</strong></li>
+                    <li>Check the boxes for the models you want:
+                        <ul>
+                            <li><strong>Amazon Titan Image Generator G1</strong> - Fast, affordable (~$0.01/image)</li>
+                            <li><strong>Stability AI SDXL 1.0</strong> - High quality (~$0.04/image)</li>
+                            <li><strong>Stability AI SD3.5 Large</strong> - Best quality (~$0.08/image)</li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>Next</strong>, then <strong>Submit</strong></li>
+                    <li>Wait 1-2 minutes for access to be granted</li>
+                </ol>
+            </section>
+
+            <section class="doc-section">
+                <h2>Step 2: Create an IAM User</h2>
+                <p>Create a dedicated user with limited permissions for the demo.</p>
+                <ol>
+                    <li>Go to the <a href="https://console.aws.amazon.com/iam/home#/users" target="_blank">IAM Users Console</a></li>
+                    <li>Click <strong>Create user</strong></li>
+                    <li>Enter a username like <code>bedrock-demo</code></li>
+                    <li>Click <strong>Next</strong></li>
+                    <li>Select <strong>Attach policies directly</strong></li>
+                    <li>Click <strong>Create policy</strong> (opens new tab)</li>
+                    <li>Select the <strong>JSON</strong> tab and paste:
+                        <pre><code>{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:ListFoundationModels"
+            ],
+            "Resource": "*"
+        }
+    ]
+}</code></pre>
+                    </li>
+                    <li>Click <strong>Next</strong></li>
+                    <li>Name it <code>BedrockImageGeneration</code></li>
+                    <li>Click <strong>Create policy</strong></li>
+                    <li>Return to the user creation tab and refresh the policy list</li>
+                    <li>Search for and select <code>BedrockImageGeneration</code></li>
+                    <li>Click <strong>Next</strong>, then <strong>Create user</strong></li>
+                </ol>
+            </section>
+
+            <section class="doc-section">
+                <h2>Step 3: Create Access Keys</h2>
+                <ol>
+                    <li>Click on your new user's name</li>
+                    <li>Go to the <strong>Security credentials</strong> tab</li>
+                    <li>Scroll to <strong>Access keys</strong> and click <strong>Create access key</strong></li>
+                    <li>Select <strong>Other</strong> as the use case</li>
+                    <li>Click <strong>Next</strong>, then <strong>Create access key</strong></li>
+                    <li><strong>Important:</strong> Copy both values now:
+                        <ul>
+                            <li><strong>Access key ID</strong> (starts with <code>AKIA...</code>)</li>
+                            <li><strong>Secret access key</strong> (only shown once!)</li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>Done</strong></li>
+                </ol>
+            </section>
+
+            <section class="doc-section">
+                <h2>Step 4: Use the Demo</h2>
+                <ol>
+                    <li>Go to the <a href="index.html">ai-facemaker demo</a></li>
+                    <li>Select the same region where you enabled model access</li>
+                    <li>Paste your Access Key ID and Secret Access Key</li>
+                    <li>Click <strong>Connect to AWS</strong></li>
+                    <li>Start generating portraits!</li>
+                </ol>
+            </section>
+
+            <section class="doc-section">
+                <h2>Security Tips</h2>
+                <ul>
+                    <li><strong>Never share your secret key</strong> - Treat it like a password</li>
+                    <li><strong>Use minimal permissions</strong> - The policy above only allows image generation</li>
+                    <li><strong>Rotate keys periodically</strong> - Delete and recreate keys every few months</li>
+                    <li><strong>Set up billing alerts</strong> - Go to <a href="https://console.aws.amazon.com/billing/home#/budgets" target="_blank">AWS Budgets</a> to set spending limits</li>
+                    <li><strong>Delete unused keys</strong> - Remove access keys you're no longer using</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Troubleshooting</h2>
+
+                <h3>"Access Denied" error</h3>
+                <ul>
+                    <li>Verify the IAM policy is attached to your user</li>
+                    <li>Check you're using the same region where you enabled model access</li>
+                    <li>Wait a few minutes after enabling model access</li>
+                </ul>
+
+                <h3>"Model not found" error</h3>
+                <ul>
+                    <li>Not all models are available in all regions</li>
+                    <li>Try US East (N. Virginia) for the widest model selection</li>
+                    <li>Ensure the specific model is enabled in Model Access</li>
+                </ul>
+
+                <h3>"Invalid credentials" error</h3>
+                <ul>
+                    <li>Double-check you copied the full access key and secret</li>
+                    <li>Ensure there are no extra spaces</li>
+                    <li>Verify the access key is still active in IAM console</li>
+                </ul>
+            </section>
+
+            <div class="doc-nav">
+                <a href="guide.html" class="btn btn-primary">Next: How to Use the Generator</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://github.com/Masked-Fox-Productions/ai-facemaker">ai-facemaker</a></p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - ai-facemaker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-bar">
+            <a href="index.html" class="nav-brand">ai-facemaker</a>
+            <div class="nav-links">
+                <a href="about.html" class="active">About</a>
+                <a href="guide.html">Guide</a>
+                <a href="setup.html">AWS Setup</a>
+                <a href="index.html" class="btn btn-primary btn-small">Try Demo</a>
+            </div>
+        </nav>
+
+        <main class="docs-content">
+            <div class="hero-section">
+                <h1>Consistent Character Portraits at Scale</h1>
+                <p class="lead">ai-facemaker is a Python library for generating character portraits that actually look like they belong in the same world.</p>
+            </div>
+
+            <section class="doc-section">
+                <h2>The Problem</h2>
+                <p>You're building a game, writing a novel, or creating a TTRPG campaign. You need portraits for your characters. You try AI image generation, and each portrait looks like it's from a different artist, a different universe, a different decade.</p>
+                <p>Consistency is hard. Maintaining a visual style across dozens of characters is even harder.</p>
+            </section>
+
+            <section class="doc-section">
+                <h2>The Solution</h2>
+                <p>ai-facemaker solves this by separating <em>world context</em> from <em>character details</em>.</p>
+                <p>You define your world once: the setting, the tone, the visual style. Then for each character, you just describe what makes them unique. The library combines these intelligently to produce portraits that share a consistent aesthetic while still being distinct individuals.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>Consistent Style</h3>
+                        <p>Define your visual language once. Every character inherits the same artistic approach, color palette, and rendering style.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Multiple Sizes</h3>
+                        <p>Generate icons (64x64), bust portraits (256x256), and full artwork (1024x1024) from a single prompt. All sizes use LANCZOS downscaling for crisp results.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Smart Caching</h3>
+                        <p>Built-in caching means you never pay twice for the same portrait. Regenerate your entire cast without re-running unchanged characters.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Multiple Models</h3>
+                        <p>Choose between Amazon Titan (fast & cheap), Stability SDXL (balanced), or SD3.5 Large (highest quality) based on your needs.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>Use Cases</h2>
+
+                <div class="use-case">
+                    <h3>Game Development</h3>
+                    <p>Generate consistent NPC portraits for RPGs, visual novels, or strategy games. Export icons for UI and full portraits for dialogue scenes from the same source.</p>
+                </div>
+
+                <div class="use-case">
+                    <h3>Tabletop RPGs</h3>
+                    <p>Create matching portraits for your entire party and important NPCs. Keep visual consistency across a campaign that runs for months.</p>
+                </div>
+
+                <div class="use-case">
+                    <h3>Fiction & Worldbuilding</h3>
+                    <p>Visualize your characters as you write. Build a cast gallery that maintains the tone and style of your world.</p>
+                </div>
+
+                <div class="use-case">
+                    <h3>Prototyping</h3>
+                    <p>Quickly generate placeholder portraits during development. Replace with final art later, or ship with AI-generated portraits for indie projects.</p>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>How It Works</h2>
+                <div class="code-example">
+                    <pre><code>from ai_facegen import PortraitClient, WorldSpec, CharacterSpec
+
+# Define your world once
+world = WorldSpec(
+    context="A dieselpunk noir mystery set in 1940s New Shanghai.",
+    style="Moody digital paintings with dramatic shadows and neon accents.",
+    negative="blurry, low quality, text, watermark"
+)
+
+# Create characters that share the world's aesthetic
+detective = CharacterSpec(
+    name="Jin Zhao",
+    role="Private Detective",
+    description="World-weary investigator, rain-soaked trench coat,
+                 cybernetic eye glowing amber, cigarette smoke."
+)
+
+# Generate portraits
+client = PortraitClient(world)
+result = client.generate(detective, size=256)
+result.save("jin_zhao.png")</code></pre>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>Pricing</h2>
+                <p>ai-facemaker is <strong>free and open source</strong>. You only pay for the AWS Bedrock API calls:</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Cost per Image</th>
+                            <th>100 Portraits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Amazon Titan</td>
+                            <td>~$0.01</td>
+                            <td>~$1.00</td>
+                        </tr>
+                        <tr>
+                            <td>Stability SDXL</td>
+                            <td>~$0.04</td>
+                            <td>~$4.00</td>
+                        </tr>
+                        <tr>
+                            <td>Stability SD3.5</td>
+                            <td>~$0.08</td>
+                            <td>~$8.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>With caching, you only pay once per unique portrait, even if you regenerate your entire project multiple times.</p>
+            </section>
+
+            <section class="doc-section">
+                <h2>Get Started</h2>
+                <div class="cta-grid">
+                    <a href="index.html" class="cta-card">
+                        <h3>Try the Demo</h3>
+                        <p>Generate portraits in your browser with your own AWS credentials.</p>
+                    </a>
+                    <a href="https://github.com/Masked-Fox-Productions/ai-facemaker" class="cta-card" target="_blank">
+                        <h3>View on GitHub</h3>
+                        <p>Star the repo, read the source, and contribute.</p>
+                    </a>
+                    <a href="https://pypi.org/project/ai-facegen/" class="cta-card" target="_blank">
+                        <h3>Install from PyPI</h3>
+                        <p><code>pip install ai-facegen</code></p>
+                    </a>
+                </div>
+            </section>
+
+            <section class="doc-section">
+                <h2>Features</h2>
+                <ul class="feature-list">
+                    <li><strong>Python Library</strong> - Import and use in your own scripts and pipelines</li>
+                    <li><strong>CLI Tool</strong> - Generate portraits from JSON config files</li>
+                    <li><strong>Batch Generation</strong> - Process entire character rosters in one run</li>
+                    <li><strong>Intelligent Caching</strong> - File-based, memory, or custom cache backends</li>
+                    <li><strong>Multiple Output Sizes</strong> - 64x64, 256x256, 512x512, 1024x1024</li>
+                    <li><strong>High-Quality Downscaling</strong> - LANCZOS filtering for crisp small portraits</li>
+                    <li><strong>Seeded Generation</strong> - Reproducible results with explicit seeds</li>
+                    <li><strong>Type Hints</strong> - Full typing support for IDE autocompletion</li>
+                    <li><strong>Async Support</strong> - Non-blocking generation for web applications</li>
+                </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Built By</h2>
+                <p>ai-facemaker is developed by <a href="https://github.com/Masked-Fox-Productions" target="_blank">Masked Fox Productions</a> and released under the Apache 2.0 license.</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://github.com/Masked-Fox-Productions/ai-facemaker">ai-facemaker</a></p>
+        </footer>
+    </div>
+</body>
+</html>
